@@ -3,79 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YEST1N 战记 | 目标80kg</title>
+    <title>YEST1N 60天作战室</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --low: #e67e22; --mid: #3498db; --high: #9b59b6; --green: #27ae60; }
-        body { font-family: sans-serif; background: #f0f2f5; margin: 0; padding: 15px; }
-        .card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .target-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
-        .target-item { text-align: center; padding: 10px; border-radius: 8px; color: white; font-weight: bold; }
-        .meal-guide { font-size: 0.85rem; line-height: 1.6; color: #444; }
-        input, select, button { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { background: var(--green); color: white; font-weight: bold; border: none; }
+        :root { --low: #e67e22; --mid: #3498db; --high: #9b59b6; --green: #2ecc71; }
+        body { font-family: sans-serif; background: #121212; color: #eee; margin: 0; padding: 15px; }
+        .container { max-width: 500px; margin: auto; }
+        .card { background: #1e1e1e; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 5px solid var(--green); }
+        .day-title { color: var(--green); font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; }
+        .macro-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; }
+        .macro-item { background: #2a2a2a; padding: 10px; border-radius: 8px; text-align: center; }
+        .gram { color: #f1c40f; font-weight: bold; }
+        .meal-item { padding: 10px 0; border-bottom: 1px solid #333; }
+        .meal-time { font-size: 0.8rem; color: #888; }
+        .meal-food { margin-top: 4px; font-size: 0.95rem; }
+        input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; }
+        input { background: #333; color: white; }
+        button { background: var(--green); color: white; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div style="max-width: 500px; margin: auto;">
-    <h2 style="text-align: center;">🚀 YEST1N 60天变身计划</h2>
+<div class="container">
+    <header style="text-align: center; padding: 10px;">
+        <h1 style="margin:0;">🔥 YEST1N 战记</h1>
+        <p id="todayDate" style="color:#666;"></p>
+    </header>
 
-    <div class="card">
-        <label>选择今日模式：</label>
-        <select id="mode" onchange="updateTargets()">
-            <option value="low">低碳日 (保肌燃脂)</option>
-            <option value="mid">中碳日 (力量维持)</option>
-            <option value="high">高碳日 (重腿充糖)</option>
-        </select>
-        <div class="target-box">
-            <div id="tc" class="target-item" style="background:var(--low)">碳: 80g</div>
-            <div id="tp" class="target-item" style="background:var(--mid)">蛋: 240g</div>
-            <div id="tf" class="target-item" style="background:var(--green)">脂: 65g</div>
+    <div class="card" id="todayCard">
+        <div class="day-title" id="dayName">--</div>
+        <div id="trainType" style="color:#aaa; font-size: 0.9rem;"></div>
+        
+        <div class="macro-grid">
+            <div class="macro-item"><small>碳水</small><br><strong id="targetC">--</strong></div>
+            <div class="macro-item"><small>蛋白</small><br><strong id="targetP">--</strong></div>
+            <div class="macro-item"><small>脂肪</small><br><strong id="targetF">--</strong></div>
         </div>
+
+        <div id="mealList"></div>
     </div>
 
-    <div class="card">
-        <h3>🍱 每餐把控 (建议)</h3>
-        <div id="mealDetail" class="meal-guide">
-            </div>
-    </div>
-
-    <div class="card">
-        <input type="number" id="weight" step="0.1" placeholder="晨称体重 (kg)">
-        <button onclick="save()">确认打卡</button>
-        <canvas id="chart"></canvas>
+    <div class="card" style="border-left-color: #3498db;">
+        <h3>📝 晨称打卡 (当前: <span id="curW">91.1</span>kg)</h3>
+        <input type="number" id="weightInput" step="0.1" placeholder="输入今日体重...">
+        <button onclick="saveW()">确认保存</button>
+        <canvas id="wChart"></canvas>
     </div>
 </div>
 
 <script>
-    const configs = {
-        low: { c:80, p:240, f:65, meal: "晨: 麸皮+蛋 | 午: 200g肉+150g土豆 | 18:00: 1馒头+1蛋 | 21:00: 300g肉+菜(无主食)" },
-        mid: { c:180, p:220, f:55, meal: "晨: 麸皮+蛋 | 午: 200g肉+200g土豆 | 18:00: 2馒头+2蛋 | 21:00: 200g肉+150g土豆" },
-        high: { c:280, p:200, f:50, meal: "晨: 燕麦+2馒头 | 午: 200g牛+300g土豆 | 18:00: 3馒头+蛋白粉 | 21:00: 200g肉+250g土豆" }
-    };
+    const weekPlans = [
+        { name: "周日 (高碳日)", train: "🏋️ 重腿日 (深蹲/硬拉)", c: 280, p: 200, f: 50, meals: ["晨: 燕麦+2馒头", "午: 200g牛+300g土豆", "18:00: 3馒头+蛋白粉", "21:00: 200g肉+250g土豆"] },
+        { name: "周一 (低碳日)", train: "💪 拉系列 (背/二头)", c: 80, p: 240, f: 65, meals: ["晨: 麸皮+5蛋清", "午: 250g肉+150g土豆", "18:00: 1馒头+1蛋白", "21:00: 300g肉+菜 (无主食)"] },
+        { name: "周二 (低碳日)", train: "👊 推系列 (胸/肩/三头)", c: 80, p: 240, f: 65, meals: ["晨: 麸皮+5蛋清", "午: 250g肉+150g南瓜", "18:00: 1馒头+1蛋白", "21:00: 300g肉+菜 (无主食)"] },
+        { name: "周三 (低碳日)", train: "🦵 腿部训练 (中低强度)", c: 80, p: 240, f: 65, meals: ["晨: 麸皮+5蛋清", "午: 250g肉+150g土豆", "18:00: 1馒头+1蛋白", "21:00: 300g肉+菜 (无主食)"] },
+        { name: "周四 (中碳日)", train: "🔥 拉系列 (大重量挑战)", c: 180, p: 220, f: 55, meals: ["晨: 麸皮+2全蛋+2蛋白", "午: 200g肉+200g土豆", "18:00: 2馒头+2蛋白", "21:00: 200g肉+150g土豆"] },
+        { name: "周五 (低碳日)", train: "⚡ 推系列 (大重量挑战)", c: 80, p: 240, f: 65, meals: ["晨: 麸皮+5蛋清", "午: 250g肉+150g南瓜", "18:00: 1馒头+1蛋白", "21:00: 300g肉+菜 (无主食)"] },
+        { name: "周六 (低碳日)", train: "🧘 核心/轻有氧 (休息周)", c: 80, p: 240, f: 65, meals: ["晨: 麸皮+5蛋清", "午: 250g肉+150g土豆", "18:00: 1馒头+1蛋白", "21:00: 300g肉+菜 (无主食)"] }
+    ];
 
-    function updateTargets() {
-        const m = document.getElementById('mode').value;
-        document.getElementById('tc').innerText = `碳: ${configs[m].c}g`;
-        document.getElementById('tp').innerText = `蛋: ${configs[m].p}g`;
-        document.getElementById('tf').innerText = `脂: ${configs[m].f}g`;
-        document.getElementById('mealDetail').innerText = configs[m].meal;
+    function init() {
+        const now = new Date();
+        const dayIdx = now.getDay(); // 0是周日
+        const plan = weekPlans[dayIdx];
+
+        document.getElementById('todayDate').innerText = now.toLocaleDateString() + " | 战役第 1 周";
+        document.getElementById('dayName').innerText = plan.name;
+        document.getElementById('trainType').innerText = plan.train;
+        document.getElementById('targetC').innerText = plan.c + "g";
+        document.getElementById('targetP').innerText = plan.p + "g";
+        document.getElementById('targetF').innerText = plan.f + "g";
+
+        document.getElementById('mealList').innerHTML = plan.meals.map(m => `
+            <div class="meal-item">
+                <div class="meal-food">${m}</div>
+            </div>
+        `).join('');
+
+        const history = JSON.parse(localStorage.getItem('yFit_v4')) || [{d:'3/22', w:91.1}];
+        document.getElementById('curW').innerText = history[history.length-1].w;
+
+        const ctx = document.getElementById('wChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: history.map(h => h.d),
+                datasets: [{ label: 'Weight', data: history.map(h => h.w), borderColor: '#2ecc71', tension: 0.4 }]
+            }
+        });
     }
 
-    function save() {
-        const w = document.getElementById('weight').value;
+    function saveW() {
+        const w = document.getElementById('weightInput').value;
         if(!w) return;
-        const log = { date: new Date().toLocaleDateString(), weight: w, mode: document.getElementById('mode').value };
-        let history = JSON.parse(localStorage.getItem('fit_yest')) || [];
-        history.push(log);
-        localStorage.setItem('fit_yest', JSON.stringify(history));
-        alert('打卡成功，继续加油！');
+        let h = JSON.parse(localStorage.getItem('yFit_v4')) || [];
+        h.push({ d: new Date().toLocaleDateString('zh-CN', {month:'short', day:'numeric'}), w: parseFloat(w) });
+        localStorage.setItem('yFit_v4', JSON.stringify(h));
         location.reload();
     }
-    
-    // 初始化
-    updateTargets();
+
+    init();
 </script>
 </body>
 </html>
