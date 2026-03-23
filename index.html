@@ -3,79 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YEST1N 战记 | 目标80kg</title>
+    <title>YEST1N 85kg 冲刺矩阵 v12.0</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --low: #e67e22; --mid: #3498db; --high: #9b59b6; --green: #27ae60; }
-        body { font-family: sans-serif; background: #f0f2f5; margin: 0; padding: 15px; }
-        .card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .target-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
-        .target-item { text-align: center; padding: 10px; border-radius: 8px; color: white; font-weight: bold; }
-        .meal-guide { font-size: 0.85rem; line-height: 1.6; color: #444; }
-        input, select, button { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { background: var(--green); color: white; font-weight: bold; border: none; }
+        :root { --green: #2ecc71; --blue: #3498db; --purple: #9b59b6; --bg: #0d1117; --card: #161b22; --text: #c9d1d9; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; }
+        .container { max-width: 480px; margin: auto; }
+        .card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 12px; border: 1px solid #30363d; }
+        .m-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+        .m-item { background: #0d1117; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #30363d; }
+        .m-val { display: block; font-size: 1.1rem; font-weight: bold; color: var(--green); }
+        .meal { border-bottom: 1px solid #30363d; padding: 10px 0; font-size: 0.85rem; }
+        .time { color: var(--green); font-weight: bold; margin-bottom: 2px; }
+        .veg { color: #2ecc71; font-style: italic; }
+        .shake { color: var(--blue); font-weight: bold; }
+        input, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #30363d; box-sizing: border-box; background: #21262d; color: white; }
+        button { background: var(--green); color: black; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
-
-<div style="max-width: 500px; margin: auto;">
-    <h2 style="text-align: center;">🚀 YEST1N 60天变身计划</h2>
+<div class="container">
+    <header style="text-align:center; padding: 10px 0;">
+        <h2 style="margin:0; color:white;">🚀 目标: 85.0kg</h2>
+        <p style="color:#8b949e; font-size:0.8rem;">Current: <span id="curW">91.1</span>kg | <span style="color:#e74c3c;">23:30 熄火</span></p>
+    </header>
 
     <div class="card">
-        <label>选择今日模式：</label>
-        <select id="mode" onchange="updateTargets()">
-            <option value="low">低碳日 (保肌燃脂)</option>
-            <option value="mid">中碳日 (力量维持)</option>
-            <option value="high">高碳日 (重腿充糖)</option>
-        </select>
-        <div class="target-box">
-            <div id="tc" class="target-item" style="background:var(--low)">碳: 80g</div>
-            <div id="tp" class="target-item" style="background:var(--mid)">蛋: 240g</div>
-            <div id="tf" class="target-item" style="background:var(--green)">脂: 65g</div>
+        <div style="display:flex; justify-content:space-between;">
+            <h3 id="dayTitle" style="margin:0;">载入中...</h3>
+            <span id="dayType" style="font-size:0.7rem; padding:2px 6px; border-radius:4px; color:black; font-weight:bold;">MODE</span>
         </div>
+        <div class="m-grid">
+            <div class="m-item"><span class="m-val" id="cC">-</span><span style="font-size:0.6rem;">碳水</span></div>
+            <div class="m-item"><span class="m-val" id="cP">-</span><span style="font-size:0.6rem;">蛋白</span></div>
+            <div class="m-item"><span class="m-val" id="cF">-</span><span style="font-size:0.6rem;">脂肪</span></div>
+        </div>
+        <div id="meals"></div>
     </div>
 
     <div class="card">
-        <h3>🍱 每餐把控 (建议)</h3>
-        <div id="mealDetail" class="meal-guide">
-            </div>
-    </div>
-
-    <div class="card">
-        <input type="number" id="weight" step="0.1" placeholder="晨称体重 (kg)">
-        <button onclick="save()">确认打卡</button>
-        <canvas id="chart"></canvas>
+        <input type="number" id="wIn" step="0.1" placeholder="晨称 (kg)">
+        <button onclick="saveW()">COMMIT (91.1 -> 85.0)</button>
+        <canvas id="chart" style="margin-top:15px;"></canvas>
     </div>
 </div>
 
 <script>
-    const configs = {
-        low: { c:80, p:240, f:65, meal: "晨: 麸皮+蛋 | 午: 200g肉+150g土豆 | 18:00: 1馒头+1蛋 | 21:00: 300g肉+菜(无主食)" },
-        mid: { c:180, p:220, f:55, meal: "晨: 麸皮+蛋 | 午: 200g肉+200g土豆 | 18:00: 2馒头+2蛋 | 21:00: 200g肉+150g土豆" },
-        high: { c:280, p:200, f:50, meal: "晨: 燕麦+2馒头 | 午: 200g牛+300g土豆 | 18:00: 3馒头+蛋白粉 | 21:00: 200g肉+250g土豆" }
-    };
+    const plans = [
+        { name: "周日", type: "高碳", c: 280, p: 150, f: 40, meals: [
+            ["07:00", "80g 麸皮 + 奶 + <span class='shake'>1勺粉</span> + 1馒头"],
+            ["12:00", "200g 牛肉 + 450g 土豆 + <span class='veg'>300g 绿叶菜</span>"],
+            ["18:00", "150g 鸡胸 + 3个馒头 + <span class='veg'>200g 绿叶菜</span>"],
+            ["21:00", "<span class='shake'>1勺粉</span> + 200g 土豆"]
+        ]},
+        { name: "周一/二/三/五/六", type: "低碳", c: 91, p: 185, f: 73, meals: [
+            ["07:00", "40g 麸皮 + 250ml奶 + 2全蛋+1蛋白 + <span class='shake'>0.5勺粉</span>"],
+            ["12:00", "200g 肉类 + 150g 土豆 + <span class='veg'>300g 绿叶菜</span> + 10ml油"],
+            ["16:00", "<span class='shake'>1勺粉</span> + 30g 混合坚果"],
+            ["18:00", "200g 肉类 + 1个馒头 + <span class='veg'>200g 绿叶菜</span> + 10ml油"],
+            ["21:00", "<span class='shake'>1.5勺粉</span> + <span class='veg'>[可选] 1根去皮黄瓜</span>"]
+        ]},
+        { name: "周四", type: "中碳", c: 180, p: 185, f: 55, meals: [
+            ["07:00", "60g 麸皮 + 250ml奶 + 2全蛋 + <span class='shake'>1勺粉</span>"],
+            ["12:00", "200g 瘦牛肉 + 300g 土豆 + <span class='veg'>300g 绿叶菜</span>"],
+            ["16:00", "1个苹果 + <span class='shake'>1勺粉</span>"],
+            ["18:00", "200g 鸡胸 + 2个馒头 + <span class='veg'>200g 绿叶菜</span>"],
+            ["21:00", "<span class='shake'>1.5勺粉</span> + 100g 土豆"]
+        ]}
+    ];
 
-    function updateTargets() {
-        const m = document.getElementById('mode').value;
-        document.getElementById('tc').innerText = `碳: ${configs[m].c}g`;
-        document.getElementById('tp').innerText = `蛋: ${configs[m].p}g`;
-        document.getElementById('tf').innerText = `脂: ${configs[m].f}g`;
-        document.getElementById('mealDetail').innerText = configs[m].meal;
-    }
-
-    function save() {
-        const w = document.getElementById('weight').value;
+    function saveW() {
+        const w = document.getElementById('wIn').value;
         if(!w) return;
-        const log = { date: new Date().toLocaleDateString(), weight: w, mode: document.getElementById('mode').value };
-        let history = JSON.parse(localStorage.getItem('fit_yest')) || [];
-        history.push(log);
-        localStorage.setItem('fit_yest', JSON.stringify(history));
-        alert('打卡成功，继续加油！');
+        let h = JSON.parse(localStorage.getItem('yFit_v12')) || [];
+        h.push({ d: new Date().toLocaleDateString('zh-CN',{month:'short',day:'numeric'}), w: parseFloat(w) });
+        localStorage.setItem('yFit_v12', JSON.stringify(h));
         location.reload();
     }
-    
-    // 初始化
-    updateTargets();
+
+    function init() {
+        const today = new Date().getDay();
+        let p = (today === 0) ? plans[0] : (today === 4 ? plans[2] : plans[1]);
+        const colors = { "低碳": "#2ecc71", "中碳": "#3498db", "高碳": "#9b59b6" };
+
+        document.getElementById('dayTitle').innerText = (today===0?"周日":today===4?"周四":"低碳日") + " 计划";
+        document.getElementById('dayType').innerText = p.type;
+        document.getElementById('dayType').style.backgroundColor = colors[p.type];
+        document.getElementById('cC').innerText = p.c + 'g';
+        document.getElementById('cP').innerText = p.p + 'g';
+        document.getElementById('cF').innerText = p.f + 'g';
+        document.getElementById('meals').innerHTML = p.meals.map(m => `<div class="meal"><div class="time">${m[0]}</div><div>${m[1]}</div></div>`).join('');
+
+        const h = JSON.parse(localStorage.getItem('yFit_v12')) || [{d:'START', w:91.1}];
+        document.getElementById('curW').innerText = h[h.length-1].w;
+        new Chart(document.getElementById('chart'), {
+            type: 'line',
+            data: { labels: h.map(i => i.d), datasets: [{ label: 'kg', data: h.map(i => i.w), borderColor: '#2ecc71', tension: 0.3, pointRadius: 4 }] },
+            options: { plugins: { legend: { display: false } } }
+        });
+    }
+    init();
 </script>
 </body>
 </html>
