@@ -7,28 +7,27 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --primary: #00ffcc;
-            --hc: #ff4757;
-            --mc: #ffa502;
-            --lc: #5352ed;
-            --bg: #0d1117;
-            --card: #161b22;
-            --border: #30363d;
-            --text: #c9d1d9;
-            --green: #2ecc71;
+            --primary: #007aff;
+            --hc: #ff3b30;
+            --mc: #ff9500;
+            --lc: #5856d6;
+            --bg: #f2f2f7;
+            --card: #ffffff;
+            --text: #1c1c1e;
+            --text2: #8e8e93;
+            --border: #e5e5ea;
+            --green: #34c759;
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
             background: var(--bg);
             color: var(--text);
             padding: 15px;
             min-height: 100vh;
-            background-image: 
-                radial-gradient(ellipse at top, rgba(0,255,204,0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at bottom right, rgba(255,71,87,0.03) 0%, transparent 40%);
+            -webkit-font-smoothing: antialiased;
         }
         
         .container { max-width: 520px; margin: 0 auto; }
@@ -36,53 +35,93 @@
         /* Header */
         .header {
             text-align: center;
-            padding: 20px 0 25px;
-            position: relative;
-        }
-        
-        .header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            padding: 20px 0 20px;
         }
         
         .header h1 {
-            font-size: 1.4rem;
-            font-weight: 300;
-            letter-spacing: 4px;
-            color: white;
-            margin-bottom: 5px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--text);
         }
-        
-        .header h1 span { color: var(--primary); font-weight: 600; }
         
         .header .subtitle {
-            font-size: 0.7rem;
-            color: #8b949e;
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            font-size: 0.75rem;
+            color: var(--text2);
+            margin-top: 5px;
         }
         
-        /* Stats Bar */
+        /* Stats Bar - iOS Style */
         .stats-bar {
             display: flex;
             justify-content: space-between;
-            background: linear-gradient(135deg, var(--card) 0%, #1a1f26 100%);
+            background: var(--card);
             border-radius: 16px;
-            padding: 15px 20px;
+            padding: 18px 20px;
             margin-bottom: 20px;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         
-        .stat-item { text-align: center; flex: 1; }
-        .stat-item .val { font-size: 1.3rem; font-weight: 700; color: var(--primary); }
-        .stat-item .label { font-size: 0.65rem; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-item { text-align: center; flex: 1; border-right: 1px solid var(--border); }
+        .stat-item:last-child { border-right: none; }
+        .stat-item .val { font-size: 1.4rem; font-weight: 700; color: var(--text); }
+        .stat-item .label { font-size: 0.7rem; color: var(--text2); margin-top: 4px; }
+        
+        /* Week Schedule - iOS Card */
+        .week-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .week-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text2);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+        
+        .day-col {
+            text-align: center;
+            padding: 10px 4px;
+            border-radius: 10px;
+            background: var(--bg);
+            transition: all 0.2s;
+        }
+        
+        .day-col.today {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .day-col .day { font-size: 0.65rem; font-weight: 600; margin-bottom: 4px; }
+        .day-col .workout { font-size: 0.55rem; color: var(--text2); margin-bottom: 4px; }
+        .day-col.today .workout { color: rgba(255,255,255,0.8); }
+        .day-col .mode { 
+            font-size: 0.6rem; 
+            font-weight: 700; 
+            padding: 3px 6px; 
+            border-radius: 6px;
+            display: inline-block;
+        }
+        
+        .day-col .mode.lc { background: rgba(88,86,214,0.15); color: var(--lc); }
+        .day-col .mode.mc { background: rgba(255,149,0,0.15); color: var(--mc); }
+        .day-col .mode.hc { background: rgba(255,59,48,0.15); color: var(--hc); }
+        .day-col.today .mode.lc { background: rgba(255,255,255,0.2); }
+        .day-col.today .mode.mc { background: rgba(255,255,255,0.2); }
+        .day-col.today .mode.hc { background: rgba(255,255,255,0.2); }
         
         /* Tab Navigation */
         .tab-nav {
@@ -91,69 +130,62 @@
             margin-bottom: 20px;
             overflow-x: auto;
             padding-bottom: 5px;
-            scrollbar-width: none;
         }
         
-        .tab-nav::-webkit-scrollbar { display: none; }
-        
         .tab-btn {
-            padding: 10px 18px;
+            padding: 12px 20px;
             background: var(--card);
-            border: 1px solid var(--border);
+            border: none;
             border-radius: 25px;
-            color: #8b949e;
-            font-size: 0.8rem;
+            color: var(--text2);
+            font-size: 0.85rem;
+            font-weight: 600;
             cursor: pointer;
             white-space: nowrap;
             transition: all 0.3s ease;
-            font-weight: 500;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
         }
-        
-        .tab-btn:hover { border-color: var(--primary); color: var(--text); }
         
         .tab-btn.active {
             background: var(--primary);
-            color: var(--bg);
-            border-color: var(--primary);
-            font-weight: 700;
-            box-shadow: 0 0 20px rgba(0,255,204,0.3);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,122,255,0.3);
         }
         
         /* Mode Selector */
         .mode-selector {
-            background: linear-gradient(145deg, #1c2128 0%, var(--card) 100%);
+            background: var(--card);
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 20px;
-            border: 1px solid var(--border);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-        }
-        
-        .mode-selector select {
-            width: 100%;
-            padding: 14px 16px;
-            background: #0d1117;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: white;
-            font-size: 0.95rem;
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238b949e'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 16px center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         
         .mode-selector label {
             display: block;
             font-size: 0.75rem;
-            color: var(--primary);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: var(--text2);
+            margin-bottom: 12px;
+            font-weight: 600;
         }
         
-        /* Macro Grid */
+        .mode-selector select {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg);
+            border: none;
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238e8e93'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+        }
+        
+        /* Macro Grid - iOS Cards */
         .macro-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -162,70 +194,52 @@
         }
         
         .macro-card {
-            background: linear-gradient(180deg, var(--card) 0%, #12161a 100%);
-            border-radius: 14px;
-            padding: 15px;
+            background: var(--card);
+            border-radius: 16px;
+            padding: 16px;
             text-align: center;
-            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             position: relative;
             overflow: hidden;
-            transition: transform 0.2s ease;
         }
         
-        .macro-card::before {
+        .macro-card::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
-            background: var(--primary);
+            height: 4px;
         }
         
-        .macro-card.carbon::before { background: var(--mc); }
-        .macro-card.protein::before { background: var(--green); }
-        .macro-card.fat::before { background: var(--lc); }
+        .macro-card.carbon::after { background: var(--mc); }
+        .macro-card.protein::after { background: var(--green); }
+        .macro-card.fat::after { background: var(--lc); }
         
         .macro-card .value {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 800;
-            color: white;
+            color: var(--text);
             display: block;
+            margin-top: 8px;
         }
         
         .macro-card .label {
-            font-size: 0.65rem;
-            color: #8b949e;
+            font-size: 0.7rem;
+            color: var(--text2);
             text-transform: uppercase;
             letter-spacing: 1px;
         }
         
-        /* Meal Cards */
+        /* Meal Cards - iOS Style */
         .meals-container { display: flex; flex-direction: column; gap: 12px; }
         
         .meal-card {
-            background: linear-gradient(135deg, var(--card) 0%, #1a1f26 100%);
+            background: var(--card);
             border-radius: 16px;
             padding: 18px;
-            border: 1px solid var(--border);
-            position: relative;
-            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
-        
-        .meal-card::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            border-radius: 16px 0 0 16px;
-            background: var(--primary);
-        }
-        
-        .meal-card.mc::before { background: var(--mc); }
-        .meal-card.hc::before { background: var(--hc); }
-        .meal-card.lc::before { background: var(--lc); }
         
         .meal-header {
             display: flex;
@@ -237,19 +251,16 @@
         .meal-title {
             font-size: 0.9rem;
             font-weight: 700;
-            color: var(--primary);
+            color: var(--text);
         }
         
-        .meal-card.mc .meal-title { color: var(--mc); }
-        .meal-card.hc .meal-title { color: var(--hc); }
-        .meal-card.lc .meal-title { color: var(--lc); }
-        
         .meal-carbs {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             padding: 4px 10px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 12px;
-            color: #8b949e;
+            background: var(--bg);
+            border-radius: 10px;
+            color: var(--text2);
+            font-weight: 600;
         }
         
         .meal-options {
@@ -258,72 +269,70 @@
         }
         
         .option-item {
-            background: rgba(0,0,0,0.3);
-            padding: 12px;
-            border-radius: 10px;
+            background: var(--bg);
+            padding: 14px;
+            border-radius: 12px;
             font-size: 0.85rem;
             line-height: 1.5;
-            color: #e6edf3;
-            border: 1px solid transparent;
-            transition: border-color 0.2s;
+            color: var(--text);
+            border-left: 3px solid var(--primary);
         }
-        
-        .option-item:hover {
-            border-color: var(--primary);
-        }
-        
-        .option-item strong { color: var(--mc); }
         
         .meal-note {
             font-size: 0.7rem;
-            color: #6e7681;
-            margin-top: 10px;
-            padding-top: 10px;
+            color: var(--text2);
+            margin-top: 12px;
+            padding-top: 12px;
             border-top: 1px dashed var(--border);
         }
         
-        /* Conveter Card */
+        /* Converter Card */
         .converter-card {
-            background: linear-gradient(145deg, #1a2332 0%, var(--card) 100%);
+            background: var(--card);
             border-radius: 16px;
             padding: 18px;
             margin-top: 20px;
-            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         
         .converter-title {
             font-size: 0.8rem;
-            color: var(--primary);
+            color: var(--text2);
             margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-weight: 600;
         }
         
         .converter-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            font-size: 0.75rem;
         }
         
         .converter-item {
-            background: rgba(0,0,0,0.3);
-            padding: 10px;
-            border-radius: 8px;
+            background: var(--bg);
+            padding: 12px;
+            border-radius: 10px;
             text-align: center;
-            color: #8b949e;
+            font-size: 0.75rem;
+            color: var(--text2);
         }
         
-        .converter-item b { display: block; color: var(--text); margin-bottom: 3px; }
+        .converter-item b { display: block; color: var(--text); margin-bottom: 4px; font-weight: 700; }
         
         /* Weight Tracker */
         .weight-section {
-            margin-top: 25px;
-            background: linear-gradient(145deg, var(--card) 0%, #1a1f26 100%);
+            display: none;
+        }
+        
+        .weight-section.show {
+            display: block;
+        }
+        
+        .weight-card {
+            background: var(--card);
             border-radius: 16px;
             padding: 20px;
-            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         
         .weight-input {
@@ -334,49 +343,48 @@
         
         .weight-input input {
             flex: 1;
-            padding: 12px;
-            background: #0d1117;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: white;
+            padding: 14px;
+            background: var(--bg);
+            border: none;
+            border-radius: 12px;
+            color: var(--text);
             font-size: 1rem;
         }
         
         .weight-input button {
-            padding: 12px 24px;
+            padding: 14px 28px;
             background: var(--primary);
             border: none;
-            border-radius: 10px;
-            color: var(--bg);
+            border-radius: 12px;
+            color: white;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .weight-input button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(0,255,204,0.4);
         }
         
         .chart-container {
             margin-top: 15px;
-            height: 180px;
+            height: 200px;
         }
         
-        /* Checkbox styling */
+        /* Checkbox */
         .check-wrapper {
             display: flex;
             align-items: center;
-            margin-top: 12px;
+            margin-top: 14px;
             cursor: pointer;
         }
         
         .check-wrapper input {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             margin-right: 10px;
             accent-color: var(--primary);
             transform: scale(1.2);
+        }
+        
+        .check-wrapper span {
+            font-size: 0.8rem;
+            color: var(--text2);
         }
     </style>
 </head>
@@ -384,13 +392,13 @@
 
 <div class="container">
     <header class="header">
-        <h1>FIT<span>CHECKER</span></h1>
-        <p class="subtitle">YEST1N Protocol v8.0</p>
+        <h1>FITCHECKER</h1>
+        <p class="subtitle">YEST1N Protocol v8.5 • 88.6kg</p>
     </header>
 
     <div class="stats-bar">
         <div class="stat-item">
-            <div class="val" id="currentWeight">--</div>
+            <div class="val" id="currentWeight">88.6</div>
             <div class="label">当前体重</div>
         </div>
         <div class="stat-item">
@@ -403,6 +411,12 @@
         </div>
     </div>
 
+    <!-- Week Schedule -->
+    <div class="week-card">
+        <div class="week-title">📅 本周碳循环 (3-1-3 训练架构)</div>
+        <div class="week-grid" id="weekGrid"></div>
+    </div>
+
     <div class="tab-nav">
         <button class="tab-btn active" onclick="switchMode('mc', this)">中碳 MC</button>
         <button class="tab-btn" onclick="switchMode('hc', this)">高碳 HC</button>
@@ -411,99 +425,119 @@
     </div>
 
     <div id="mainContent">
-        <div class="mode-sector">
-            <div class="mode-selector">
-                <label>📅 当前档位</label>
-                <select id="daySelect" onchange="render()">
-                    <option value="work_mc">周二/四/五 (工作日-中碳)</option>
-                    <option value="work_hc">周三 (工作日-高碳-练腿)</option>
-                    <option value="holiday_lc">周一/周日 (假期/休息-低碳)</option>
-                    <option value="weekend_hc">周六 (周末连练-高碳)</option>
-                </select>
+        <div class="mode-selector">
+            <label>📅 当前档位</label>
+            <select id="daySelect" onchange="render()">
+                <option value="mon">周一 (拉 + 有氧) - 低碳</option>
+                <option value="tue">周二 (推) - 中碳</option>
+                <option value="wed">周三 (腿) - 高碳</option>
+                <option value="thu">周四 (休息) - 低碳</option>
+                <option value="fri">周五 (拉) - 中碳</option>
+                <option value="sat">周六 (推) - 中碳</option>
+                <option value="sun">周日 (腿) - 高碳</option>
+            </select>
+        </div>
+
+        <div class="macro-grid">
+            <div class="macro-card carbon">
+                <span class="value" id="macroC">--g</span>
+                <span class="label">碳水 C</span>
             </div>
-
-            <div class="macro-grid">
-                <div class="macro-card carbon">
-                    <span class="value" id="macroC">147g</span>
-                    <span class="label">碳水</span>
-                </div>
-                <div class="macro-card protein">
-                    <span class="value" id="macroP">135g</span>
-                    <span class="label">蛋白</span>
-                </div>
-                <div class="macro-card fat">
-                    <span class="value" id="macroF">59g</span>
-                    <span class="label">脂肪</span>
-                </div>
+            <div class="macro-card protein">
+                <span class="value" id="macroP">--g</span>
+                <span class="label">蛋白 P</span>
             </div>
+            <div class="macro-card fat">
+                <span class="value" id="macroF">--g</span>
+                <span class="label">脂肪 F</span>
+            </div>
+        </div>
 
-            <div class="meals-container" id="mealList"></div>
+        <div class="meals-container" id="mealList"></div>
 
-            <div class="converter-card">
-                <div class="converter-title">🔄 碳水换算 (每10g单位)</div>
-                <div class="converter-grid">
-                    <div class="converter-item"><b>燕麦</b>16g(干)</div>
-                    <div class="converter-item"><b>意面</b>13g(干)</div>
-                    <div class="converter-item"><b>馒头</b>0.5个</div>
-                    <div class="converter-item"><b>蓝莓</b>72g</div>
-                    <div class="converter-item"><b>红薯</b>50g</div>
-                    <div class="converter-item"><b>玉米</b>45g</div>
-                </div>
+        <div class="converter-card">
+            <div class="converter-title">🔄 碳水换算参考</div>
+            <div class="converter-grid">
+                <div class="converter-item"><b>燕麦</b>16g/10g C</div>
+                <div class="converter-item"><b>意面</b>13g/10g C</div>
+                <div class="converter-item"><b>馒头</b>0.5个</div>
+                <div class="converter-item"><b>蓝莓</b>72g/10g C</div>
+                <div class="converter-item"><b>红薯</b>50g/10g C</div>
+                <div class="converter-item"><b>玉米</b>45g/10g C</div>
             </div>
         </div>
     </div>
 
-    <div id="weightSection" class="weight-section" style="display:none;">
-        <div class="mode-selector">
-            <label>⚖️ 体重记录</label>
+    <div id="weightSection" class="weight-section">
+        <div class="weight-card">
+            <label style="display:block;font-size:0.8rem;color:var(--text2);margin-bottom:12px;font-weight:600;">⚖️ 体重记录</label>
             <div class="weight-input">
                 <input type="number" id="weightInput" step="0.1" placeholder="今日体重 (kg)">
                 <button onclick="saveWeight()">记录</button>
             </div>
-        </div>
-        <div class="chart-container">
-            <canvas id="weightChart"></canvas>
+            <div class="chart-container">
+                <canvas id="weightChart"></canvas>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+    // 88.6kg 碳循环数据
     const data = {
-        work_mc: {
-            c: 147, p: 135, f: 59, color: 'var(--mc)', mode: '中碳 MC',
+        lc: {
+            name: '低碳 LC',
+            c: 93, p: 140, f: 124,
             meals: [
-                { t: 'Meal 1 (40g C)', d: '<b>选项 A:</b> 65g燕麦 + 50g蓝莓<br><b>选项 B:</b> 2个杂粮馒头 + 10g蓝莓' },
-                { t: 'Meal 2 (40g C)', d: '<b>选项 A:</b> 55g干意面 + 蔬菜<br><b>选项 B:</b> 2个杂粮馒头 + 100g红薯' },
-                { t: 'Meal 3 (47g C)', d: '<b>选项 A:</b> 65g干意面 + 50g蓝莓<br><b>选项 B:</b> 2.5个杂粮馒头 + 蔬菜' },
-                { t: 'PWO 练后', d: '1.5份蛋白粉 + 50g蓝莓 (零脂肪)' }
+                { t: 'Meal 1 早餐', c: 35, p: 45, f: 15,
+                  d: '35g燕麦 + 70g希腊酸奶 + 15g奇亚籽 + 1份粉 + 80g蓝莓 + 2个全蛋' },
+                { t: 'Meal 2 午餐', c: 5, p: 40, f: 55,
+                  d: '200g牛板腱 + 1个整牛油果 + 大量绿叶菜' },
+                { t: 'Meal 3 练前', c: 12, p: 57, f: 50,
+                  d: '200g鸡胸肉 + 2个全蛋 + 70g混合坚果' },
+                { t: 'Meal 4 练后', c: 27, p: 25, f: 2,
+                  d: '1.5个18g碳水馒头 + 1份粉' }
             ]
         },
-        work_hc: {
-            c: 315, p: 135, f: 38, color: 'var(--hc)', mode: '高碳 HC',
+        mc: {
+            name: '中碳 MC',
+            c: 145, p: 140, f: 58,
             meals: [
-                { t: 'Meal 1 (80g C)', d: '<b>选项 A:</b> 130g燕麦 + 100g蓝莓<br><b>选项 B:</b> 4个杂粮馒头 + 50g蓝莓' },
-                { t: 'Meal 2 (100g C)', d: '<b>选项 A:</b> 135g干意面 + 1/2根玉米<br><b>选项 B:</b> 5个杂粮馒头 + 100g红薯' },
-                { t: 'Meal 3 (100g C)', d: '<b>选项 A:</b> 135g干意面 + 100g蓝莓<br><b>选项 B:</b> 4个杂粮馒头 + 1根玉米' },
-                { t: 'PWO 练后', d: '1.5份蛋白粉 + 100g蓝莓 + 1个杂粮馒头' }
+                { t: 'Meal 1 早餐', c: 35, p: 30, f: 8,
+                  d: '50g燕麦 + 1份粉 + 1个全蛋 + 100g蓝莓' },
+                { t: 'Meal 2 午餐', c: 36, p: 40, f: 30,
+                  d: '120g熟意面 + 200g牛板腱' },
+                { t: 'Meal 3 练前', c: 30, p: 45, f: 10,
+                  d: '100g熟意面 + 200g鸡胸肉 + 20g坚果' },
+                { t: 'Meal 4 练后', c: 36, p: 25, f: 2,
+                  d: '2个18g碳水馒头 + 1份粉' }
             ]
         },
-        holiday_lc: {
-            c: 95, p: 135, f: 126, color: 'var(--lc)', mode: '低碳 LC',
+        hc: {
+            name: '高碳 HC',
+            c: 310, p: 140, f: 37,
             meals: [
-                { t: 'Meal 1 (开启)', d: '2全蛋 + 1份蛋白粉 + 100g蓝莓 + 20g坚果' },
-                { t: 'Meal 2 (午餐)', d: '180g熟肉 + 1个牛油果 + 大份蔬菜' },
-                { t: 'Meal 3 (晚餐)', d: '180g熟肉 + 30g坚果 + 大份蔬菜' },
-                { t: '睡前', d: '1.5份蛋白粉 (不加碳水)' }
-            ]
-        },
-        weekend_hc: {
-            c: 315, p: 135, f: 38, color: 'var(--hc)', mode: '周末高碳',
-            meals: [
-                { t: 'Meal 1 (连练后)', d: '150g干意面 + 180g熟肉 + 1根水果玉米' },
-                { t: 'Meal 2 (下午)', d: '130g干燕麦 + 1.5份蛋白粉 + 100g蓝莓' },
-                { t: 'Meal 3 (睡前)', d: '4个杂粮馒头 + 150g熟肉 + 蔬菜' }
+                { t: 'Meal 1 早餐', c: 80, p: 30, f: 5,
+                  d: '80g燕麦 + 1份粉 + 1根水果玉米' },
+                { t: 'Meal 2 午餐', c: 90, p: 45, f: 5,
+                  d: '300g熟意面 + 200g鸡胸肉' },
+                { t: 'Meal 3 练前', c: 80, p: 45, f: 5,
+                  d: '250g蒸土豆 + 100g熟意面 + 200g鸡胸肉' },
+                { t: 'Meal 4 练后', c: 72, p: 25, f: 2,
+                  d: '4个18g碳水馒头 + 1份粉' }
             ]
         }
+    };
+
+    // 周计划映射
+    const weekSchedule = {
+        0: { day: '日', work: '腿', mode: 'hc', label: 'HC' },
+        1: { day: '一', work: '拉+有氧', mode: 'lc', label: 'LC' },
+        2: { day: '二', work: '推', mode: 'mc', label: 'MC' },
+        3: { day: '三', work: '腿', mode: 'hc', label: 'HC' },
+        4: { day: '四', work: '休息', mode: 'lc', label: 'LC' },
+        5: { day: '五', work: '拉', mode: 'mc', label: 'MC' },
+        6: { day: '六', work: '推', mode: 'mc', label: 'MC' }
     };
 
     let currentMode = 'mc';
@@ -511,46 +545,73 @@
     function switchMode(mode, btn) {
         if (mode === 'weight') {
             document.getElementById('mainContent').style.display = 'none';
-            document.getElementById('weightSection').style.display = 'block';
+            document.getElementById('weightSection').classList.add('show');
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             return;
         }
 
-        document.getElementById('weightSection').style.display = 'none';
+        document.getElementById('weightSection').classList.remove('show');
         document.getElementById('mainContent').style.display = 'block';
         
         currentMode = mode;
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         
-        const modeMap = { mc: 'work_mc', hc: 'work_hc', lc: 'holiday_lc' };
-        document.getElementById('daySelect').value = modeMap[mode];
         render();
     }
 
     function render() {
-        const selected = document.getElementById('daySelect').value;
-        const config = data[selected];
-        const modeKey = selected.split('_')[1];
+        const today = new Date().getDay();
         
+        // 更新周计划显示
+        const weekHtml = Object.entries(weekSchedule).map(([idx, d]) => `
+            <div class="day-col ${parseInt(idx) === today ? 'today' : ''}">
+                <div class="day">${d.day}</div>
+                <div class="workout">${d.work}</div>
+                <div class="mode ${d.mode}">${d.label}</div>
+            </div>
+        `).join('');
+        document.getElementById('weekGrid').innerHTML = weekHtml;
+        
+        // 根据选择的日期获取对应的碳水值
+        const daySelect = document.getElementById('daySelect');
+        const selected = daySelect.value;
+        
+        let config;
+        if (selected === 'mon' || selected === 'thu') config = data.lc;
+        else if (selected === 'tue' || selected === 'fri' || selected === 'sat') config = data.mc;
+        else config = data.hc;
+        
+        // 更新宏量数据
         document.getElementById('macroC').innerText = config.c + 'g';
         document.getElementById('macroP').innerText = config.p + 'g';
         document.getElementById('macroF').innerText = config.f + 'g';
-        document.getElementById('todayMode').innerText = config.mode;
+        document.getElementById('todayMode').innerText = config.name;
         
-        const mealsHtml = config.meals.map(m => `
-            <div class="meal-card ${modeKey}">
+        // 计算当前累计
+        let usedC = 0, usedP = 0, usedF = 0;
+        const mealsHtml = config.meals.map(m => {
+            usedC += m.c; usedP += m.p; usedF += m.f;
+            return `
+            <div class="meal-card">
                 <div class="meal-header">
                     <div class="meal-title">${m.t}</div>
+                    <div class="meal-carbs">${m.c}C ${m.p}P ${m.f}F</div>
                 </div>
-                <div class="meal-options">${m.d}</div>
-                <div class="meal-note">* 均需配 150g 熟肉 + 大份蔬菜</div>
+                <div class="meal-options">
+                    <div class="option-item">${m.d}</div>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:0.7rem;color:var(--text2);">
+                    <span>累计: ${usedC}/${config.c}g C</span>
+                    <span>${usedP}/${config.p}g P</span>
+                    <span>${usedF}/${config.f}g F</span>
+                </div>
                 <label class="check-wrapper">
-                    <input type="checkbox"> 已完成
+                    <input type="checkbox"> <span>已完成</span>
                 </label>
             </div>
-        `).join('');
+        `}).join('');
         
         document.getElementById('mealList').innerHTML = mealsHtml;
     }
@@ -564,6 +625,7 @@
         localStorage.setItem('fitchecker_weight', JSON.stringify(history));
         
         document.getElementById('weightInput').value = '';
+        document.getElementById('currentWeight').innerText = w;
         initChart();
     }
 
@@ -573,8 +635,6 @@
         const history = JSON.parse(localStorage.getItem('fitchecker_weight') || '[]');
         
         if (history.length > 0) {
-            document.getElementById('currentWeight').innerText = history[history.length - 1].w + 'kg';
-            
             const ctx = document.getElementById('weightChart').getContext('2d');
             if (chart) chart.destroy();
             
@@ -585,12 +645,12 @@
                     datasets: [{
                         label: '体重 (kg)',
                         data: history.map(i => i.w),
-                        borderColor: '#00ffcc',
-                        backgroundColor: 'rgba(0,255,204,0.1)',
+                        borderColor: '#007aff',
+                        backgroundColor: 'rgba(0,122,255,0.1)',
                         fill: true,
                         tension: 0.4,
                         pointRadius: 4,
-                        pointBackgroundColor: '#00ffcc'
+                        pointBackgroundColor: '#007aff'
                     }]
                 },
                 options: {
@@ -598,12 +658,12 @@
                     maintainAspectRatio: false,
                     scales: {
                         y: {
-                            grid: { color: '#30363d' },
-                            ticks: { color: '#8b949e' }
+                            grid: { color: '#e5e5ea' },
+                            ticks: { color: '#8e8e93' }
                         },
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#8b949e' }
+                            ticks: { color: '#8e8e93' }
                         }
                     },
                     plugins: {
@@ -614,26 +674,14 @@
         }
     }
 
-    // 初始化
+    // 初始化 - 自动判断今天是周几
+    const today = new Date().getDay();
+    const dayMap = {
+        0: 'sun', 1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri', 6: 'sat'
+    };
+    document.getElementById('daySelect').value = dayMap[today];
     render();
     initChart();
-    
-    // 自动判断今天是周几
-    const today = new Date().getDay();
-    const autoMap = {
-        1: 'holiday_lc', // 周一
-        2: 'work_mc',    // 周二
-        3: 'work_hc',    // 周三
-        4: 'work_mc',    // 周四
-        5: 'work_mc',    // 周五
-        6: 'weekend_hc', // 周六
-        0: 'holiday_lc'  // 周日
-    };
-    
-    if (autoMap[today]) {
-        document.getElementById('daySelect').value = autoMap[today];
-        render();
-    }
 </script>
 
 </body>
